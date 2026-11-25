@@ -1,0 +1,2 @@
+# ecuamallorca-menu
+menu
