@@ -86,3 +86,10 @@ Copia la foto a `assets/gallery/` y añade en `gallery` de `menu.js`:
 
 Abre `index.html` (inicio) o `carta.html` con doble clic. Funciona sin servidor.
 Para probar la vista móvil: en Chrome, F12 → icono de móvil (Ctrl+Shift+M).
+
+## Idiomas y alérgenos (v4)
+
+- **Idiomas ES/EN**: se detecta por el navegador (es/ca/gl/eu → español, resto → inglés) y se puede cambiar con el botón ES|EN. Enlace forzado: `carta.html?lang=en`.
+- Las traducciones están en `data/en.js` (clave = texto en español). Si falta una, se muestra el español. HTML marcado con `data-t` / `data-ta`.
+- **Alérgenos**: `data/alergenos.js` (14 alérgenos UE + asignación por plato). Cada plato muestra "Contiene: …" y el botón *Alérgenos* filtra/resalta platos.
+- ⚠️ La asignación es **estimada** (sin recetas). El restaurante debe revisarla con `revision-alergenos-ecuamallorca.md` antes de darla por buena. `null` = "consultar al personal".

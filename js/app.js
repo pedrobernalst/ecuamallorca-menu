@@ -14,6 +14,10 @@
   const desktop = matchMedia('(min-width: 900px)');
   const TONES = ['yellow', 'blue', 'red'];
   const R = D.restaurant;
+  const tr = (window.I18N && window.I18N.tr) || (s => s);
+  const AL = window.ALERGENOS || { list: [], items: {} };
+  const selected = new Set();
+  const alName = id => { const a = AL.list.find(x => x.id === id); return a ? tr(a.es) : id; };
   const fmt = new Intl.NumberFormat(R.locale || 'es-ES', { style: 'currency', currency: R.currency || 'EUR', minimumFractionDigits: 2 });
   const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
   const smooth = () => (reduce ? 'auto' : 'smooth');
@@ -45,10 +49,10 @@
 
   /* ---------- Tema y textos ---------- */
   Object.entries(D.theme || {}).forEach(([k, v]) => document.documentElement.style.setProperty('--' + k, v));
-  document.title = `${R.name} · Carta digital`;
-  $$('[data-bind]').forEach(el => { el.textContent = el.dataset.bind.split('.').reduce((o, k) => o?.[k], D) ?? ''; });
+  document.title = `${R.name} · ${tr('Carta digital')}`;
+  $$('[data-bind]').forEach(el => { el.textContent = tr(el.dataset.bind.split('.').reduce((o, k) => o?.[k], D) ?? ''); });
   ['heroLogo', 'barLogo', 'footLogo'].forEach(id => { const el = $('#' + id); el.src = R.logo; });
-  $('#heroLogo').alt = `${R.name} ${R.kind}`;
+  $('#heroLogo').alt = `${R.name} ${tr(R.kind)}`;
   $('#footLogo').alt = R.name;
   const favicon = $('link[rel=icon]'); if (favicon) favicon.href = R.logo;
 
@@ -93,11 +97,14 @@
     const tone = TONES[n % 3];
     const items = h('ul', { class: 'items' });
     c.items.forEach((it, i) => {
-      const label = h('span', { class: 'item__name' }, it.name);
-      if (it.note) label.append(h('small', { class: 'item__note', text: it.note }));
+      const label = h('span', { class: 'item__name' }, tr(it.name));
+      if (it.note) label.append(h('small', { class: 'item__note', text: tr(it.note) }));
+      const al = AL.items[it.name];
+      if (al === null) label.append(h('small', { class: 'item__al item__al--ask', text: tr('Consulta los alérgenos al personal') }));
+      else if (al && al.length) label.append(h('small', { class: 'item__al', text: tr('Contiene') + ': ' + al.map(alName).join(' · ') }));
       const li = h('li', { class: 'item', 'data-reveal': true, style: `--d:${Math.min(i, 10) * 45}ms` },
         label, h('span', { class: 'item__dots', 'aria-hidden': 'true' }), h('span', { class: 'item__price', text: fmt.format(it.price) }));
-      li._label = label; li._name = it.name; li._note = it.note;
+      li._label = label; li._al = al;
       items.append(li);
     });
 
@@ -113,9 +120,9 @@
       h('div', { class: 'cat__in' + (sub ? ' is-duo' : ''), style: `--sw:${sw}px;--sh:${sh}px;--ar:${(sw / sh).toFixed(3)}` },
         h('header', { class: 'cat__head', 'data-reveal': true },
           h('span', { class: 'cat__num', 'aria-hidden': 'true', text: String(n + 1).padStart(2, '0') }),
-          c.kicker ? h('p', { class: 'kicker', text: c.kicker }) : null,
-          h('h2', { class: 'cat__title', id: 'h-' + c.id, text: c.title }),
-          h('p', { class: 'cat__count', text: `${n1} ${n1 === 1 ? 'opción' : 'opciones'}` }),
+          c.kicker ? h('p', { class: 'kicker', text: tr(c.kicker) }) : null,
+          h('h2', { class: 'cat__title', id: 'h-' + c.id, text: tr(c.title) }),
+          h('p', { class: 'cat__count', text: `${n1} ${tr(n1 === 1 ? 'opción' : 'opciones')}` }),
           h('i', { class: 'flag', 'aria-hidden': 'true' }, h('b'), h('b'), h('b'))),
         h('div', { class: 'cat__list' }, items),
         stage));
@@ -127,8 +134,8 @@
   /* ---------- Pestañas (barra inferior en móvil, arriba en escritorio) ---------- */
   let activeTab = null;
   D.tabs.forEach(t => {
-    dockTabs.append(h('button', { class: 'dock__tab', type: 'button', 'data-tab': t.id, 'aria-pressed': 'false' }, svg(ICONS[t.icon] || ICONS.plate), h('span', { text: t.label })));
-    tabsEl.append(h('button', { class: 'tab', type: 'button', 'data-tab': t.id, 'aria-pressed': 'false', text: t.label }));
+    dockTabs.append(h('button', { class: 'dock__tab', type: 'button', 'data-tab': t.id, 'aria-pressed': 'false' }, svg(ICONS[t.icon] || ICONS.plate), h('span', { text: tr(t.label) })));
+    tabsEl.append(h('button', { class: 'tab', type: 'button', 'data-tab': t.id, 'aria-pressed': 'false', text: tr(t.label) }));
   });
   document.addEventListener('click', e => {
     const b = e.target.closest('.tab, .dock__tab');
@@ -141,13 +148,15 @@
     picksEl.replaceChildren(...tabCats().map((c, i) =>
       h('button', { class: 'pick', type: 'button', 'data-cat': c.id, 'data-tone': catIndex[c.id].tone },
         h('span', { class: 'pick__disc' }, img(c.photos[0], { alt: '', eager: i < 4 })),
-        h('span', { class: 'pick__name', text: c.title }))));
+        h('span', { class: 'pick__name', text: tr(c.title) }))));
     picksEl.scrollLeft = 0;
   }
   function renderChips() {
-    chipsEl.replaceChildren(...tabCats().map(c =>
-      h('button', { class: 'chip', type: 'button', 'data-cat': c.id, 'data-tone': catIndex[c.id].tone },
-        h('span', { class: 'chip__ph' }, img(c.photos[0], { alt: '' })), c.title)));
+    chipsEl.replaceChildren(
+      h('button', { class: 'chip chip--al' + (selected.size ? ' is-on' : ''), type: 'button' }, svg('<path d="M12 3.5l9 16H3l9-16z"/><path d="M12 10v4.5M12 17.2v.1"/>'), tr('Alérgenos') + (selected.size ? ' · ' + selected.size : '')),
+      ...tabCats().map(c =>
+        h('button', { class: 'chip', type: 'button', 'data-cat': c.id, 'data-tone': catIndex[c.id].tone },
+          h('span', { class: 'chip__ph' }, img(c.photos[0], { alt: '' })), tr(c.title))));
   }
   document.addEventListener('click', e => {
     const b = e.target.closest('.chip, .pick');
@@ -163,10 +172,10 @@
       h('a', { class: 'card', href: '#' + f.cat, 'data-tone': f.tone || TONES[i % 3], 'data-go-cat': f.cat, draggable: 'false' },
         h('div', { class: 'card__arch' }, img(f.photo, { attrs: { draggable: 'false' } })),
         h('div', { class: 'card__body' },
-          h('h3', { class: 'card__name', text: f.name }),
-          h('p', { class: 'card__desc', text: f.desc }),
-          h('span', { class: 'card__price' }, f.from ? h('small', { text: 'desde' }) : null, fmt.format(f.price)),
-          h('span', { class: 'card__go', text: 'Ver en la carta' })))));
+          h('h3', { class: 'card__name', text: tr(f.name) }),
+          h('p', { class: 'card__desc', text: tr(f.desc) }),
+          h('span', { class: 'card__price' }, f.from ? h('small', { text: tr('desde') }) : null, fmt.format(f.price)),
+          h('span', { class: 'card__go', text: tr('Ver en la carta') })))));
     rail.scrollLeft = 0;
   }
 
@@ -255,7 +264,7 @@
   /* ---------- Buscador (hoja a pantalla completa) ---------- */
   const sheet = $('#sheet'), q = $('#q'), body = $('#sheetBody'), clearBtn = $('#qClear'), app = $('#app');
   let opener = null;
-  const hints = D.searchHints || ['Ceviche', 'Encebollado', 'Bolón', 'Café', 'Cerveza', 'Gambas'];
+  const hints = (D.searchHints || ['Ceviche', 'Encebollado', 'Bolón', 'Café', 'Cerveza', 'Gambas']).map(tr);
 
   function openSheet(from) {
     opener = from || document.activeElement;
@@ -285,18 +294,18 @@
   function renderResults() {
     const term = norm(q.value.trim());
     body.replaceChildren();
-    if (!term) { body.append(h('p', { class: 'sheet__label', text: 'Prueba con…' }), hintChips()); return; }
+    if (!term) { body.append(h('p', { class: 'sheet__label', text: tr('Prueba con…') }), hintChips()); return; }
     let total = 0;
     D.categories.forEach(c => {
-      const hits = c.items.map((it, i) => ({ it, i })).filter(({ it }) => norm(it.name + ' ' + (it.note || '')).includes(term));
+      const hits = c.items.map((it, i) => ({ it, i })).filter(({ it }) => norm(tr(it.name) + ' ' + it.name + ' ' + tr(it.note || '') + ' ' + (it.note || '')).includes(term));
       if (!hits.length) return;
       total += hits.length;
       body.append(h('section', { class: 'res-group' },
-        h('h3', { text: c.title }),
+        h('h3', { text: tr(c.title) }),
         hits.map(({ it, i }) => h('button', { class: 'res', type: 'button', onclick: () => jumpToItem(c.id, i) },
-          h('span', { class: 'res__name' }, marked(it.name, term)), h('span', { class: 'res__price', text: fmt.format(it.price) })))));
+          h('span', { class: 'res__name' }, marked(tr(it.name), term)), h('span', { class: 'res__price', text: fmt.format(it.price) })))));
     });
-    if (!total) body.append(h('p', { class: 'sheet__empty', text: 'No encontramos nada con ese nombre.' }), h('p', { class: 'sheet__label', text: 'Prueba con…' }), hintChips());
+    if (!total) body.append(h('p', { class: 'sheet__empty', text: tr('No encontramos nada con ese nombre.') }), h('p', { class: 'sheet__label', text: tr('Prueba con…') }), hintChips());
   }
   function jumpToItem(catId, idx) {
     const x = catIndex[catId];
@@ -316,7 +325,7 @@
     const isPhoto = g.kind === 'photo';
     const im = isPhoto ? h('img', { src: g.src, alt: g.label || '', width: g.w, height: g.h, loading: 'lazy', decoding: 'async' }) : img(g.photo);
     mosaic.append(h('figure', { class: 'tile' + (isPhoto ? ' tile--photo' : ''), 'data-tone': g.tone || TONES[i % 3], 'data-reveal': true, style: `--d:${(i % 4) * 90}ms` },
-      h('div', { class: 'tile__frame' }, im), g.label ? h('figcaption', { text: g.label }) : null));
+      h('div', { class: 'tile__frame' }, im), g.label ? h('figcaption', { text: tr(g.label) }) : null));
   });
 
   /* ---------- Pie ---------- */
@@ -326,9 +335,54 @@
   if (C.phone) add(C.phone, 'tel:' + C.phone.replace(/\s/g, ''));
   if (C.whatsapp) add('WhatsApp', 'https://wa.me/' + C.whatsapp.replace(/\D/g, ''));
   if (C.instagram) add('@' + C.instagram.replace('@', ''), 'https://instagram.com/' + C.instagram.replace('@', ''));
-  if (D.links && D.links.review) add('Deja tu reseña', D.links.review);
-  links.append(h('li', {}, h('a', { href: 'index.html', text: 'Volver al inicio' })));
-  $('#footNote').textContent = R.note || '';
+  if (D.links && D.links.review) add(tr('Deja tu reseña'), D.links.review);
+  links.append(h('li', {}, h('a', { href: 'index.html', text: tr('Volver al inicio') })));
+  if (window.I18N) links.append(h('li', {}, h('a', { href: '#', text: window.I18N.lang === 'es' ? 'English' : 'Español', onclick: e => { e.preventDefault(); window.I18N.toggle(); } })));
+  $('#footNote').textContent = tr(R.note || '');
+
+  /* ---------- Alérgenos: filtro «Tengo alergia a…» ---------- */
+  const alSheet = $('#alSheet'), alBody = $('#alBody');
+  let alOpener = null;
+  try { JSON.parse(sessionStorage.getItem('alerg') || '[]').forEach(id => AL.list.some(a => a.id === id) && selected.add(id)); } catch (_) {}
+
+  function applyFilter() {
+    const on = selected.size > 0;
+    $$('.item').forEach(li => {
+      li.classList.toggle('is-risk', on && Array.isArray(li._al) && li._al.some(x => selected.has(x)));
+      li.classList.toggle('is-unk', on && li._al === null);
+    });
+    $$('.albtn, .chip--al, #barAl').forEach(b => b.classList.toggle('is-on', on));
+    const n = $('.albtn__n'); if (n) { n.hidden = !on; n.textContent = selected.size; }
+    const chip = $('.chip--al'); if (chip) chip.lastChild.textContent = tr('Alérgenos') + (on ? ' · ' + selected.size : '');
+    try { sessionStorage.setItem('alerg', JSON.stringify([...selected])); } catch (_) {}
+  }
+  function renderAl() {
+    const chips = AL.list.map(a => h('button', {
+      class: 'al__chip', type: 'button', 'aria-pressed': String(selected.has(a.id)), 'data-id': a.id, text: tr(a.es),
+      onclick: e => { selected.has(a.id) ? selected.delete(a.id) : selected.add(a.id); e.currentTarget.setAttribute('aria-pressed', String(selected.has(a.id))); applyFilter(); }
+    }));
+    alBody.replaceChildren(
+      h('p', { class: 'al__intro', text: tr('Marca los alérgenos que debes evitar y te mostraremos qué platos los contienen.') }),
+      h('div', { class: 'al__grid' }, chips),
+      h('div', { class: 'al__actions' },
+        h('button', { class: 'btn btn--solid', type: 'button', text: tr('Ver la carta con el filtro'), onclick: closeAl }),
+        h('button', { class: 'btn btn--ghost', type: 'button', text: tr('Borrar selección'), onclick: () => { selected.clear(); chips.forEach(c => c.setAttribute('aria-pressed', 'false')); applyFilter(); } })),
+      h('p', { class: 'al__note', text: tr('Información orientativa. Si tienes alguna alergia o intolerancia, díselo siempre al personal antes de pedir.') }));
+  }
+  function openAl(from) {
+    alOpener = from || document.activeElement;
+    renderAl();
+    alSheet.inert = false; app.inert = true; alSheet.classList.add('is-open');
+    setTimeout(() => $('#alClose').focus({ preventScroll: true }), reduce ? 0 : 120);
+  }
+  function closeAl() {
+    alSheet.classList.remove('is-open'); alSheet.inert = true; app.inert = false;
+    alOpener?.focus?.({ preventScroll: true });
+  }
+  $('#alClose').addEventListener('click', closeAl);
+  document.addEventListener('click', e => { const b = e.target.closest('#alOpen, #barAl, .chip--al'); if (b) openAl(b); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && alSheet.classList.contains('is-open')) closeAl(); });
+  applyFilter();
 
   /* ---------- Arranque (admite #pestaña o #categoría en la URL) ---------- */
   watch(document);

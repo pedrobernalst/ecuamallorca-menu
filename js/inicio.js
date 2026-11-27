@@ -9,16 +9,17 @@
   if (!D) return;
   const R = D.restaurant || {};
   const $ = s => document.querySelector(s);
+  const tr = (window.I18N && window.I18N.tr) || (s => s);
 
   /* Tema y textos */
   Object.entries(D.theme || {}).forEach(([k, v]) => document.documentElement.style.setProperty('--' + k, v));
-  if (R.name) document.title = `${R.name} · ${R.kind || 'Carta digital'}`;
+  if (R.name) document.title = `${R.name} · ${tr(R.kind || 'Carta digital')}`;
   document.querySelectorAll('[data-bind]').forEach(el => {
     const v = el.dataset.bind.split('.').reduce((o, k) => o?.[k], D);
-    if (v != null) el.textContent = v;
+    if (v != null) el.textContent = tr(v);
   });
   const logo = $('#logo');
-  if (logo && R.logo) { logo.src = R.logo; logo.alt = `${R.name} ${R.kind || ''}`.trim(); }
+  if (logo && R.logo) { logo.src = R.logo; logo.alt = `${R.name} ${tr(R.kind || '')}`.trim(); }
   const fav = $('link[rel=icon]'); if (fav && R.logo) fav.href = R.logo;
 
   /* Botón de reseña: solo aparece si hay enlace */

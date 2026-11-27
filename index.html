@@ -41,12 +41,12 @@
     <h1 class="welcome"><span data-bind="restaurant.tagline">Sabores del Ecuador</span> <em data-bind="restaurant.tagline2">en Mallorca</em></h1>
   </section>
 
-  <nav class="actions" aria-label="¿Qué quieres hacer?">
+  <nav class="actions" aria-label="¿Qué quieres hacer?" data-ta="aria-label">
     <a class="act act--menu" href="carta.html">
       <span class="act__ico" aria-hidden="true">
         <svg viewBox="0 0 24 24" focusable="false"><path d="M7 3v5a2.5 2.5 0 0 0 5 0V3M9.5 3v18"/><path d="M17.5 21V3c-2 1.4-3 4-3 7 0 1.8 1 3 3 3"/></svg>
       </span>
-      <span class="act__txt"><strong>Menú</strong><small>Platos, bebidas y precios</small></span>
+      <span class="act__txt"><strong data-t>Menú</strong><small data-t>Platos, bebidas y precios</small></span>
       <span class="act__go" aria-hidden="true">
         <svg viewBox="0 0 24 24" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </span>
@@ -57,7 +57,7 @@
       <span class="act__ico" aria-hidden="true">
         <svg viewBox="0 0 24 24" focusable="false" class="star"><path d="M12 3.4l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.7 6.8 19.4l1-5.8L3.6 9.5l5.8-.8L12 3.4z"/></svg>
       </span>
-      <span class="act__txt"><strong>Deja tu reseña</strong><small>Cuéntanos qué tal estuvo</small></span>
+      <span class="act__txt"><strong data-t>Deja tu reseña</strong><small data-t>Cuéntanos qué tal estuvo</small></span>
       <span class="act__go" aria-hidden="true">
         <svg viewBox="0 0 24 24" focusable="false"><path d="M7 17L17 7M9 7h8v8"/></svg>
       </span>
@@ -66,12 +66,14 @@
   </div>
 
   <footer class="home__foot">
-    <p>Gracias por visitarnos</p>
+    <p data-t>Gracias por visitarnos</p>
   </footer>
 
 </main>
 
 <script src="data/menu.js"></script>
+<script src="data/en.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/inicio.js"></script>
 </body>
 </html>
