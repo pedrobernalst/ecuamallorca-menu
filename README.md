@@ -10,13 +10,20 @@ portada corta (la carta se ve casi de inmediato), barra inferior al alcance del 
 completa que salta directo al plato, y deslizar a izquierda/derecha para cambiar de pestaña.
 En escritorio y tablet grande se adapta a una vista más amplia.
 
+## Cómo se ve al tocar la tarjeta
+
+1. **Inicio** (`index.html`): logo del restaurante y dos botones grandes — **Menú** (abre la carta) y
+   **Deja tu reseña** (abre Google para escribirla).
+2. **Carta** (`carta.html`): la carta digital completa. Al final tiene los enlaces «Deja tu reseña» y «Volver al inicio».
+
+La tarjeta NFC lleva la dirección principal (`https://USUARIO.github.io/REPO/`) → abre el Inicio.
+
 ## Estructura
 
 ```
-index.html        estructura de la página (no hace falta tocarla)
-css/style.css     diseño y colores (variables en :root)
-js/app.js         lógica: pestañas, barra inferior, búsqueda, gestos, animaciones
-data/menu.js      ← TODO el contenido: nombre, categorías, platos, precios, fotos
+index.html        página de inicio (logo + botones)          css/inicio.css · js/inicio.js
+carta.html        la carta digital                           css/style.css  · js/app.js
+data/menu.js      ← TODO el contenido: nombre, categorías, platos, precios, fotos, enlace de reseña
 assets/logo.webp  logo del restaurante
 assets/dishes/    fotos recortadas (WebP con fondo transparente)
 assets/fonts/     tipografías (autoalojadas)
@@ -30,11 +37,23 @@ assets/fonts/     tipografías (autoalojadas)
 4. Graba esa URL en la tarjeta con una app como *NFC Tools* (**Escribir → Añadir registro → URL**).
    Tarjetas NTAG213/215 funcionan perfecto en iPhone y Android.
 
+## Enlace de reseña de Google
+
+En `data/menu.js`, campo `links.review`:
+
+```js
+links: {"review": "https://search.google.com/local/writereview?placeid=TU_PLACE_ID"},
+```
+
+El `placeid` es el identificador del negocio en Google Maps. Si dejas `review` vacío (`""`), el botón no aparece.
+(Alternativa: el enlace corto `g.page/r/…/review` que da el Perfil de Empresa de Google en «Pedir reseñas».)
+
 ## Enlaces directos (una tarjeta por zona)
 
-- `…/#bebidas` abre directo la pestaña de bebidas (útil para la barra).
-- `…/#carta` · `…/#desayunos`
-- `…/#ceviches`, `…/#cervezas`, etc. (cualquier `id` de categoría de `menu.js`) bajan a esa categoría.
+- `…/carta.html#bebidas` abre directo la pestaña de bebidas (útil para la barra).
+- `…/carta.html#carta` · `…/carta.html#desayunos`
+- `…/carta.html#ceviches`, `…/carta.html#cervezas`, etc. (cualquier `id` de categoría de `menu.js`) bajan a esa categoría.
+- Si alguien abre `…/#bebidas` (formato antiguo), el Inicio lo redirige solo a la carta.
 
 ## Qué se ve primero (en `data/menu.js`)
 
@@ -52,7 +71,7 @@ Edita `data/menu.js`. Los precios son números (`8.5` → «8,50 €»). Cada pl
 ## Hacer otro restaurante
 
 1. Duplica el repositorio (botón **Use this template** o *fork*).
-2. Cambia `data/menu.js` (nombre, categorías, platos), `assets/logo.webp` y las fotos de `assets/dishes/`.
+2. Cambia `data/menu.js` (nombre, categorías, platos, `links.review`), `assets/logo.webp` y las fotos de `assets/dishes/`.
 3. Ajusta los colores en `data/menu.js → theme`, por ejemplo:
    `theme: { yellow: "#F6E4A6", blue: "#C4D6EC", red: "#F1BDB7" }`.
 4. Rellena `restaurant.contact` (dirección, teléfono, WhatsApp, Instagram) y aparecerán en el pie.
@@ -65,5 +84,5 @@ Copia la foto a `assets/gallery/` y añade en `gallery` de `menu.js`:
 
 ## Para ver en local
 
-Abre `index.html` con doble clic. Funciona sin servidor.
+Abre `index.html` (inicio) o `carta.html` con doble clic. Funciona sin servidor.
 Para probar la vista móvil: en Chrome, F12 → icono de móvil (Ctrl+Shift+M).

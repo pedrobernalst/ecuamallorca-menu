@@ -1,7 +1,7 @@
 /* ==========================================================================
    Carta digital · lógica (mobile first)
    Lee window.MENU_DATA (data/menu.js) y construye toda la página.
-   Sin dependencias ni build: funciona abriendo index.html o en GitHub Pages.
+   Sin dependencias ni build: funciona abriendo carta.html o en GitHub Pages.
    ========================================================================== */
 (() => {
   'use strict';
@@ -326,7 +326,8 @@
   if (C.phone) add(C.phone, 'tel:' + C.phone.replace(/\s/g, ''));
   if (C.whatsapp) add('WhatsApp', 'https://wa.me/' + C.whatsapp.replace(/\D/g, ''));
   if (C.instagram) add('@' + C.instagram.replace('@', ''), 'https://instagram.com/' + C.instagram.replace('@', ''));
-  if (!links.children.length) links.remove();
+  if (D.links && D.links.review) add('Deja tu reseña', D.links.review);
+  links.append(h('li', {}, h('a', { href: 'index.html', text: 'Volver al inicio' })));
   $('#footNote').textContent = R.note || '';
 
   /* ---------- Arranque (admite #pestaña o #categoría en la URL) ---------- */

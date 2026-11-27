@@ -3,124 +3,75 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Ecuamallorca · Carta digital</title>
-<meta name="description" content="Carta digital de Ecuamallorca Bar · Restaurante. Cocina tradicional ecuatoriana en Mallorca.">
+<title>Ecuamallorca · Bar · Restaurante</title>
+<meta name="description" content="Ecuamallorca Bar · Restaurante. Mira la carta o déjanos tu reseña en Google.">
 <meta name="theme-color" content="#FBF8F1">
 <link rel="icon" href="assets/logo.webp" type="image/webp">
-<link rel="stylesheet" href="css/style.css">
-<script>document.documentElement.classList.add('js')</script>
+<script>
+  /* Enlaces antiguos tipo …/#bebidas → se abren directamente en la carta */
+  if (location.hash.length > 1) location.replace('carta.html' + location.hash);
+</script>
+<link rel="stylesheet" href="css/inicio.css">
+<!-- La carta se descarga mientras el cliente lee esta página: al tocar «Menú» abre al instante -->
+<link rel="prefetch" href="carta.html">
+<link rel="prefetch" href="css/style.css">
+<link rel="prefetch" href="js/app.js">
 </head>
 <body>
-<a class="skip" href="#menu">Saltar a la carta</a>
-<noscript><p style="padding:24px;text-align:center">Activa JavaScript para ver la carta.</p></noscript>
 
-<div id="app">
+<main class="home" id="home">
 
-<!-- PORTADA -->
-<header class="hero" id="inicio">
-  <div class="hero__dishes" id="heroDishes" aria-hidden="true"></div>
-  <div class="hero__inner">
-    <p class="eyebrow"><span data-bind="restaurant.kind"></span><i class="flag" aria-hidden="true"><b></b><b></b><b></b></i></p>
-    <div class="hero__stage">
-      <svg class="hero__arcs" viewBox="0 0 1000 500" aria-hidden="true" focusable="false">
+  <div class="home__dishes" id="dishes" aria-hidden="true"></div>
+
+  <header class="home__top">
+    <i class="flag" aria-hidden="true"><b></b><b></b><b></b></i>
+  </header>
+
+  <div class="home__main">
+  <section class="home__hero">
+    <div class="stage">
+      <svg class="stage__arcs" viewBox="0 0 1000 500" aria-hidden="true" focusable="false">
         <circle cx="500" cy="500" r="498" class="arc arc--y"/>
         <circle cx="500" cy="500" r="388" class="arc arc--b"/>
         <circle cx="500" cy="500" r="278" class="arc arc--r"/>
         <circle cx="500" cy="500" r="176" class="arc arc--c"/>
       </svg>
-      <img class="hero__logo" id="heroLogo" alt="" width="797" height="445" fetchpriority="high">
+      <img class="stage__logo" id="logo" src="assets/logo.webp" alt="Ecuamallorca · Bar · Restaurante" width="797" height="445" fetchpriority="high">
     </div>
-    <h1 class="hero__title"><span data-bind="restaurant.tagline"></span> <em data-bind="restaurant.tagline2"></em></h1>
-    <p class="hero__intro" data-bind="restaurant.intro"></p>
-    <div class="hero__cta">
-      <a class="btn btn--solid" href="#menu" data-go="carta">Ver la carta</a>
-      <a class="btn btn--ghost" href="#bebidas" data-go="bebidas">Bebidas</a>
-    </div>
-  </div>
-  <a class="hero__scroll" href="#menu" data-go="carta" aria-label="Ir a la carta"><span></span></a>
-</header>
-
-<!-- CINTA -->
-<div class="ribbon" aria-hidden="true"><div class="ribbon__track" id="ribbon"></div></div>
-
-<!-- ATAJOS (móvil) -->
-<section class="picks" aria-labelledby="picksT">
-  <div class="picks__head">
-    <h2 id="picksT" class="picks__title">¿Qué te apetece?</h2>
-    <p class="picks__sub">Toca una categoría</p>
-  </div>
-  <div class="picks__rail" id="picks"></div>
-</section>
-
-<main>
-<!-- CARTA -->
-<section class="carta" id="menu" aria-label="La carta">
-  <nav class="bar" id="bar" aria-label="Categorías">
-    <div class="bar__top">
-      <a class="bar__logo" href="#inicio" aria-label="Volver arriba"><img id="barLogo" alt="" width="797" height="445"></a>
-      <div class="tabs" id="tabs" role="group" aria-label="Secciones de la carta"></div>
-      <button class="round bar__search" id="barSearch" type="button" aria-label="Buscar en la carta"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button>
-    </div>
-    <div class="chips" id="chips"></div>
-  </nav>
-
-  <section class="strip" id="strip" hidden aria-labelledby="stripT">
-    <div class="strip__head" data-reveal>
-      <p class="kicker">Platos con alma ecuatoriana</p>
-      <h2 id="stripT" class="h2">Nuestros clásicos</h2>
-    </div>
-    <div class="rail" id="rail" aria-label="Platos destacados"></div>
+    <h1 class="welcome"><span data-bind="restaurant.tagline">Sabores del Ecuador</span> <em data-bind="restaurant.tagline2">en Mallorca</em></h1>
   </section>
 
-  <div id="sections"></div>
-</section>
+  <nav class="actions" aria-label="¿Qué quieres hacer?">
+    <a class="act act--menu" href="carta.html">
+      <span class="act__ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false"><path d="M7 3v5a2.5 2.5 0 0 0 5 0V3M9.5 3v18"/><path d="M17.5 21V3c-2 1.4-3 4-3 7 0 1.8 1 3 3 3"/></svg>
+      </span>
+      <span class="act__txt"><strong>Menú</strong><small>Platos, bebidas y precios</small></span>
+      <span class="act__go" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+    </a>
 
-<!-- GALERÍA -->
-<section class="gallery" id="galeria" aria-labelledby="galT">
-  <div class="wrap gallery__head" data-reveal>
-    <p class="kicker">Del Pacífico a los Andes</p>
-    <h2 id="galT" class="h2">Un pedacito de Ecuador <em>en tu mesa</em></h2>
-    <i class="flag flag--lg" aria-hidden="true"><b></b><b></b><b></b></i>
+    <!-- El enlace se toma de data/menu.js → links.review (si está vacío, el botón no aparece) -->
+    <a class="act act--review" id="reviewBtn" href="#" target="_blank" rel="noopener noreferrer" hidden>
+      <span class="act__ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false" class="star"><path d="M12 3.4l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.7 6.8 19.4l1-5.8L3.6 9.5l5.8-.8L12 3.4z"/></svg>
+      </span>
+      <span class="act__txt"><strong>Deja tu reseña</strong><small>Cuéntanos qué tal estuvo</small></span>
+      <span class="act__go" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      </span>
+    </a>
+  </nav>
   </div>
-  <div class="wrap mosaic" id="mosaic"></div>
-</section>
+
+  <footer class="home__foot">
+    <p>Gracias por visitarnos</p>
+  </footer>
+
 </main>
 
-<!-- PIE -->
-<footer class="foot" id="foot">
-  <div class="foot__flag" aria-hidden="true"><b></b><b></b><b></b></div>
-  <div class="wrap foot__in">
-    <img id="footLogo" alt="" width="797" height="445" loading="lazy">
-    <p class="foot__thanks">Gracias por visitarnos</p>
-    <ul class="foot__links" id="footLinks"></ul>
-    <p class="foot__note" id="footNote"></p>
-    <p class="foot__copy"><span data-bind="restaurant.name"></span> · <span data-bind="restaurant.kind"></span></p>
-  </div>
-</footer>
-
-<!-- BARRA INFERIOR (móvil) -->
-<nav class="dock" id="dock" aria-label="Secciones de la carta">
-  <div class="dock__tabs" id="dockTabs"><i class="dock__ind" aria-hidden="true"></i></div>
-  <button class="dock__search" id="dockSearch" type="button" aria-label="Buscar en la carta"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg></button>
-</nav>
-
-</div><!-- /#app -->
-
-<!-- BUSCADOR -->
-<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Buscar en la carta" inert>
-  <div class="sheet__top">
-    <label class="sheet__field">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
-      <span class="sr">Buscar plato o bebida</span>
-      <input id="q" type="search" placeholder="Buscar plato o bebida…" autocomplete="off" autocapitalize="off" enterkeyhint="search">
-      <button class="sheet__clear" id="qClear" type="button" aria-label="Borrar" hidden><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-    </label>
-    <button class="sheet__close" id="sheetClose" type="button">Cerrar</button>
-  </div>
-  <div class="sheet__body" id="sheetBody" aria-live="polite"></div>
-</div>
-
 <script src="data/menu.js"></script>
-<script src="js/app.js"></script>
+<script src="js/inicio.js"></script>
 </body>
 </html>

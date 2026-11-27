@@ -5,6 +5,8 @@
  * ==================================================================== */
 window.MENU_DATA = {
   restaurant: {"name": "Ecuamallorca", "kind": "Bar · Restaurante", "tagline": "Sabores del Ecuador", "tagline2": "en Mallorca", "intro": "Cocina tradicional ecuatoriana. Mira la carta, elige y disfruta.", "logo": "assets/logo.webp", "logoW": 797, "logoH": 445, "currency": "EUR", "locale": "es-ES", "contact": {"address": "", "phone": "", "whatsapp": "", "instagram": "", "mapsUrl": ""}, "note": "Venta de bebidas alcohólicas prohibida a menores de 18 años."},
+  /* Página de inicio (index.html): review = enlace de Google para dejar reseña. Vacío = el botón no aparece. */
+  links: {"review": "https://search.google.com/local/writereview?placeid=ChIJK88xGYmTlxIRT3smmCBbbDI"},
   /* Colores: ejemplo  theme: { yellow: "#F6E4A6", blue: "#C4D6EC", red: "#F1BDB7" } */
   defaultTab: "carta",
   theme: {},
